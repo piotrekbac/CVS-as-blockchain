@@ -4,7 +4,7 @@ using System.Text;
 
 //Piotr Bacior 15 722 WSEI Kraków - Zadanie dodatkowe - Blockchain 
 
-namespace BlockchainVersionControl.Models
+namespace BlockchainVersionControl
 {
     //Definujemy klasę DocumentVersion, która będzie reprezentować wersję dokumentu w blockchainie
     public class DocumentVersion
