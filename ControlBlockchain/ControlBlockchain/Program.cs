@@ -21,7 +21,7 @@ namespace BlockchainVersionControl
 
                 //Jeżeli plik blockchain.json nie istnieje, a użytkownik nie podał polecenia init, to wyświetlamy komunikat o błędzie i kończymy działanie programu
                 if (!File.Exists(filePath) && command != "init")
-                {                    
+                {
                     Console.WriteLine("Nie znaleziono pliku blockchain.json. Użyj polecenia 'init', aby rozpocząć.");
                     return;
                 }
@@ -193,8 +193,3 @@ namespace BlockchainVersionControl
         }
     }
 }
-
-
-
-
-

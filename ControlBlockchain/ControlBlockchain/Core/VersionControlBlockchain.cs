@@ -1,11 +1,10 @@
-﻿using BlockchainVersionControl.Models;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml;
+using BlockchainVersionControl.Models;
+using Newtonsoft.Json;
 
 //Piotr Bacior 15 722 WSEI Kraków - Zadanie dodatkowe - Blockchain
 
@@ -31,10 +30,10 @@ namespace BlockchainVersionControl.Core
         //Tworzymy pierwszy blok - genesis block, który jest pierwszym blokiem w łańcuchu, zawiera treść dokumentu i nie ma poprzedniego bloku
         private void CreateGenesisBlock(string content)
         {
-            var formattedContent = string.Join('\n', content
-                .Split('\n')
-                .Select(line => "+ " + line));
-            var genesisBlock = new DocumentVersion(0, DateTime.Now, formattedContent, "0");
+            //Ustawiamy indeks bloku na 0, datę i czas na teraz, różnice jako treść dokumentu, a hash poprzedniego bloku jako "0"
+            var genesisBlock = new DocumentVersion(0, DateTime.Now, content, "0");
+
+            //Dodajemy blok genesis do łańcucha bloków
             Chain.Add(genesisBlock);
         }
 
@@ -52,12 +51,17 @@ namespace BlockchainVersionControl.Core
             //Tworzymy StringBuilder, który będzie używany do przechowywania różnic między wersjami dokumentu
             StringBuilder diff = new();
 
+            //Obliczamy maksymalną długość obu wersji dokumentu, czyli maksymalną liczbę linii w obu wersjach
+            int maxLen = Math.Max(oldLines.Length, newLines.Length);
+
             //Porównujemy dwie wersje dokumentu linia po linii i dodajemy różnice do StringBuildera
-            for (int i = 0; i < newLines.Length; i++)
+            for (int i = 0; i < maxLen; i++)
             {
-                if (i >= oldLines.Length || oldLines[i] != newLines[i])
+                if (i < oldLines.Length && (i >= newLines.Length || oldLines[i] != newLines[i]))
+                    diff.AppendLine($"- {oldLines[i]}");
+                if (i < newLines.Length && (i >= oldLines.Length || oldLines[i] != newLines[i]))
                     diff.AppendLine($"+ {newLines[i]}");
-                else
+                if (i < oldLines.Length && i < newLines.Length && oldLines[i] == newLines[i])
                     diff.AppendLine($"  {newLines[i]}");
             }
 
@@ -124,32 +128,28 @@ namespace BlockchainVersionControl.Core
         //Teraz sprawdzamy, czy integralność łańcucha bloków jest zachowana, czyli czy każdy blok w łańcuchu jest poprawny i nie został zmieniony
         public bool IsChainValid()
         {
+            //Sprawdzamy, czy łańcuch bloków jest pusty, czyli nie zawiera żadnych bloków
             for (int i = 1; i < Chain.Count; i++)
             {
                 var current = Chain[i];
                 var previous = Chain[i - 1];
 
-                //Sprawdzamy czy hash bieżącego bloku jest poprawny
-                if (current.Hash != current.CalculateHash())
-                {
-                    return false;
-                }
+                //Sprawdzamy teraz czy hash bloku jest poprawny, czyli czy hash bloku jest zgodny z hashem obliczonym na podstawie jego właściwości na nowo
+                if (current.Hash != current.CalculateHash()) return false;
 
-                //Sprawdzamy czy PreviousHash bieżącego bloku odpowiada hashowi poprzedniego bloku
-                if (current.PreviousHash != previous.Hash)
-                {
-                    return false;
-                }
+                //Sprawdzamy teraz czy hash poprzedniego bloku jest zgodny z zapisanym hashem poprzedniego bloku PreviousHash
+                if (current.PreviousHash != previous.Hash) return false;
             }
+
+            //Jeżeli wszystkie bloki są poprawne i nie zostały zmienione, to zwracamy true, czyli łańcuch bloków jest poprawny
             return true;
         }
-
 
         //Definiujemy metodę SaveToFile(), która zapisuje łańcuch bloków do pliku w formacie JSON
         public void SaveToFile(string path)
         {
             //Serializujemy łańcuch bloków do formatu JSON, czyli przekształcamy obiekt łańcucha bloków na tekst w formacie JSON
-            var json = JsonConvert.SerializeObject(Chain, Newtonsoft.Json.Formatting.Indented);
+            var json = JsonConvert.SerializeObject(Chain, Formatting.Indented);
 
             //Zapisujemy tekst w formacie JSON do pliku o podanej ścieżce
             File.WriteAllText(path, json);
@@ -158,10 +158,19 @@ namespace BlockchainVersionControl.Core
         //Definiujemy metodę LoadFromFile(), która ładuje łańcuch bloków z pliku w formacie JSON
         public static VersionControlBlockchain LoadFromFile(string path)
         {
+            //Wczytujemy tekst z pliku o podanej ścieżce
             var json = File.ReadAllText(path);
-            var chain = JsonConvert.DeserializeObject<List<DocumentVersion>>(json) ?? new List<DocumentVersion>();
+
+            //Odtwarzamy łańcuch bloków z tekstu w formacie JSON, czyli przekształcamy tekst w formacie JSON na obiekt łańcucha bloków
+            var chain = JsonConvert.DeserializeObject<List<DocumentVersion>>(json);
+
+            //Tworzymy pusty łańcuch bloków, który będzie zawierał odtworzony łańcuch bloków z pliku
             var blockchain = new VersionControlBlockchain("");
+
+            //Ustawiamy łańcuch bloków na odtworzony łańcuch bloków z pliku
             blockchain.Chain = chain;
+
+            //Zwracamy odtworzony łańcuch bloków, czyli obiekt klasy VersionControlBlockchain
             return blockchain;
         }
     }
