@@ -124,22 +124,26 @@ namespace BlockchainVersionControl.Core
         //Teraz sprawdzamy, czy integralność łańcucha bloków jest zachowana, czyli czy każdy blok w łańcuchu jest poprawny i nie został zmieniony
         public bool IsChainValid()
         {
-            //Sprawdzamy, czy łańcuch bloków jest pusty, czyli nie zawiera żadnych bloków
             for (int i = 1; i < Chain.Count; i++)
             {
                 var current = Chain[i];
                 var previous = Chain[i - 1];
 
-                //Sprawdzamy teraz czy hash bloku jest poprawny, czyli czy hash bloku jest zgodny z hashem obliczonym na podstawie jego właściwości na nowo
-                if (current.Hash != current.CalculateHash()) return false;
+                //Sprawdzamy czy hash bieżącego bloku jest poprawny
+                if (current.Hash != current.CalculateHash())
+                {
+                    return false;
+                }
 
-                //Sprawdzamy teraz czy hash poprzedniego bloku jest zgodny z zapisanym hashem poprzedniego bloku PreviousHash
-                if (current.PreviousHash != previous.Hash) return false;
+                //Sprawdzamy czy PreviousHash bieżącego bloku odpowiada hashowi poprzedniego bloku
+                if (current.PreviousHash != previous.Hash)
+                {
+                    return false;
+                }
             }
-
-            //Jeżeli wszystkie bloki są poprawne i nie zostały zmienione, to zwracamy true, czyli łańcuch bloków jest poprawny
             return true;
         }
+
 
         //Definiujemy metodę SaveToFile(), która zapisuje łańcuch bloków do pliku w formacie JSON
         public void SaveToFile(string path)

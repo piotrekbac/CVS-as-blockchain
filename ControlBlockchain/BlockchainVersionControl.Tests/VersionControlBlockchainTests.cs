@@ -115,5 +115,43 @@ namespace BlockchainVersionControl.Tests
             var czyPoprawny = blockchain.IsChainValid();
             Assert.IsFalse(czyPoprawny);
         }
+
+        //Definiujemy test, który odpowiada za sprawdzenie czy CalculateHash oblicza poprawny hash
+        [TestMethod]
+        public void IsChainValid_ReturnsFalse_WhenPreviousHashDoesNotMatch()
+        {
+            // Arrange
+            var blockchain = new VersionControlBlockchain("Initial content");
+            blockchain.AddNewVersion("First update");
+            blockchain.AddNewVersion("Second update");
+
+            // Manipulacja: zmieniamy PreviousHash drugiego bloku
+            blockchain.Chain[2].PreviousHash = "tampered_hash";
+
+            // Act
+            bool isValid = blockchain.IsChainValid();
+
+            // Assert
+            Assert.IsFalse(isValid, "Łańcuch powinien być nieważny, gdy PreviousHash nie odpowiada Hash poprzedniego bloku.");
+        }
+
+        //Definiujemy test, który odpowiada za sprawdzenie czy CalculateHash oblicza poprawny hash
+        [TestMethod]
+        public void CalculateHash_ReturnsDifferentHash_WhenContentChanges()
+        {
+            // Arrange
+            var timestamp = DateTime.Now;
+            var block1 = new DocumentVersion(1, timestamp, "Diff1", "prevHash");
+            var block2 = new DocumentVersion(1, timestamp, "Diff2", "prevHash");
+
+            // Act
+            var hash1 = block1.Hash;
+            var hash2 = block2.Hash;
+
+            // Assert
+            Assert.AreNotEqual(hash1, hash2, "Zmiana zawartości bloku powinna prowadzić do zmiany jego hasha.");
+        }
+
+        
     }
 }
