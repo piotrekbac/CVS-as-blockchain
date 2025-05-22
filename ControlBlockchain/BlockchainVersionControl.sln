@@ -5,12 +5,7 @@ VisualStudioVersion = 17.14.36109.1 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlBlockchain", "ControlBlockchain\ControlBlockchain.csproj", "{398F4636-ABE4-4A6A-A9A9-BB874443DE09}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Models", "Models", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-	ProjectSection(SolutionItems) = preProject
-		DiffHelper.cs = DiffHelper.cs
-		DocumentVersion.cs = DocumentVersion.cs
-		VersionControlBlockchain.cs = VersionControlBlockchain.cs
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainVersionControl.Tests", "BlockchainVersionControl.Tests\BlockchainVersionControl.Tests.csproj", "{EF0429BD-C4A7-4EC9-A06C-999DD3BC7FD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,6 +17,10 @@ Global
 		{398F4636-ABE4-4A6A-A9A9-BB874443DE09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{398F4636-ABE4-4A6A-A9A9-BB874443DE09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{398F4636-ABE4-4A6A-A9A9-BB874443DE09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF0429BD-C4A7-4EC9-A06C-999DD3BC7FD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF0429BD-C4A7-4EC9-A06C-999DD3BC7FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF0429BD-C4A7-4EC9-A06C-999DD3BC7FD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF0429BD-C4A7-4EC9-A06C-999DD3BC7FD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BlockchainVersionControl.Models;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BlockchainVersionControl.Models;
-using Newtonsoft.Json;
+using System.Xml;
 
 //Piotr Bacior 15 722 WSEI Kraków - Zadanie dodatkowe - Blockchain
 
@@ -30,10 +31,10 @@ namespace BlockchainVersionControl.Core
         //Tworzymy pierwszy blok - genesis block, który jest pierwszym blokiem w łańcuchu, zawiera treść dokumentu i nie ma poprzedniego bloku
         private void CreateGenesisBlock(string content)
         {
-            //Ustawiamy indeks bloku na 0, datę i czas na teraz, różnice jako treść dokumentu, a hash poprzedniego bloku jako "0"
-            var genesisBlock = new DocumentVersion(0, DateTime.Now, content, "0");
-
-            //Dodajemy blok genesis do łańcucha bloków
+            var formattedContent = string.Join('\n', content
+                .Split('\n')
+                .Select(line => "+ " + line));
+            var genesisBlock = new DocumentVersion(0, DateTime.Now, formattedContent, "0");
             Chain.Add(genesisBlock);
         }
 
@@ -144,7 +145,7 @@ namespace BlockchainVersionControl.Core
         public void SaveToFile(string path)
         {
             //Serializujemy łańcuch bloków do formatu JSON, czyli przekształcamy obiekt łańcucha bloków na tekst w formacie JSON
-            var json = JsonConvert.SerializeObject(Chain, Formatting.Indented);
+            var json = JsonConvert.SerializeObject(Chain, Newtonsoft.Json.Formatting.Indented);
 
             //Zapisujemy tekst w formacie JSON do pliku o podanej ścieżce
             File.WriteAllText(path, json);
@@ -153,19 +154,10 @@ namespace BlockchainVersionControl.Core
         //Definiujemy metodę LoadFromFile(), która ładuje łańcuch bloków z pliku w formacie JSON
         public static VersionControlBlockchain LoadFromFile(string path)
         {
-            //Wczytujemy tekst z pliku o podanej ścieżce
             var json = File.ReadAllText(path);
-
-            //Odtwarzamy łańcuch bloków z tekstu w formacie JSON, czyli przekształcamy tekst w formacie JSON na obiekt łańcucha bloków
-            var chain = JsonConvert.DeserializeObject<List<DocumentVersion>>(json);
-
-            //Tworzymy pusty łańcuch bloków, który będzie zawierał odtworzony łańcuch bloków z pliku
+            var chain = JsonConvert.DeserializeObject<List<DocumentVersion>>(json) ?? new List<DocumentVersion>();
             var blockchain = new VersionControlBlockchain("");
-
-            //Ustawiamy łańcuch bloków na odtworzony łańcuch bloków z pliku
             blockchain.Chain = chain;
-
-            //Zwracamy odtworzony łańcuch bloków, czyli obiekt klasy VersionControlBlockchain
             return blockchain;
         }
     }
