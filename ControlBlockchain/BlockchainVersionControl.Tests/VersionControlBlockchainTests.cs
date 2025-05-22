@@ -1,5 +1,4 @@
-﻿
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BlockchainVersionControl.Core;
 using BlockchainVersionControl.Models;
 using System;
@@ -27,6 +26,7 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzyTworzyBlokGenesis()
         {
+            //Act & Assert
             Assert.AreEqual(1, blockchain.Chain.Count);
             Assert.AreEqual(0, blockchain.Chain[0].Index);
         }
@@ -35,7 +35,10 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzyDodajeNowaWersje()
         {
+            //Act
             blockchain.AddNewVersion("Linia 1\nLinia Zmieniona");
+
+            //Assert
             Assert.AreEqual(2, blockchain.Chain.Count);
         }
 
@@ -43,8 +46,13 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzyZwracaNajnowszyBlok()
         {
+            //Arrange
             blockchain.AddNewVersion("Nowy tekst");
+
+            //Act
             var najnowszy = blockchain.GetLatestVersionBlock();
+
+            //Assert
             Assert.AreEqual(1, najnowszy.Index);
         }
 
@@ -52,8 +60,13 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzyRekonstruujeWersjeDokumentu()
         {
+            //Arrange
             blockchain.AddNewVersion("Linia 1\nLinia Zmieniona");
+
+            //Act
             var wynik = blockchain.GetDocumentVersion(1);
+
+            //Assert
             StringAssert.Contains(wynik, "Linia Zmieniona");
         }
 
@@ -61,8 +74,13 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzyWyznaczaPoprawnyDiff()
         {
+            //Arrange
             blockchain.AddNewVersion("Linia 1\nNowa linia");
+
+            //Act
             var diff = blockchain.GetDiffBetweenVersions(0, 1);
+
+            //Assert.IsNotNull(diff);
             StringAssert.Contains(diff, "+ Nowa linia");
         }
 
@@ -70,7 +88,10 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzySprawdzaPoprawnoscLancuchaGdyPoprawny()
         {
+            //Arrange i act 
             blockchain.AddNewVersion("Linia 1\nNowa linia");
+
+            //Assert
             Assert.IsTrue(blockchain.IsChainValid());
         }
 
@@ -78,8 +99,13 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzyWykrywaManipulacjeZawartosci()
         {
+            //Arrange
             blockchain.AddNewVersion("A");
+
+            //Act
             blockchain.Chain[1].Diff = "Zmanipulowana zawartosc";
+
+            //Assert
             Assert.IsFalse(blockchain.IsChainValid());
         }
 
@@ -87,10 +113,15 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzyZapisujeIOdczytujePoprawnieLancuch()
         {
+            //Arrange
             var sciezka = "test_chain.json";
             blockchain.AddNewVersion("Linia nowa");
             blockchain.SaveToFile(sciezka);
+
+            //Act
             var wczytany = VersionControlBlockchain.LoadFromFile(sciezka);
+
+            //Assert
             Assert.AreEqual(blockchain.Chain.Count, wczytany.Chain.Count);
             File.Delete(sciezka);
         }
@@ -99,9 +130,12 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzyWczytujePustyLubBlednyPlik()
         {
+            //Arrange i Act
             var sciezka = "empty.json";
             File.WriteAllText(sciezka, "");
             var wczytany = VersionControlBlockchain.LoadFromFile(sciezka);
+
+            //Assert
             Assert.IsNotNull(wczytany);
             File.Delete(sciezka);
         }
@@ -110,10 +144,15 @@ namespace BlockchainVersionControl.Tests
         [TestMethod]
         public void CzyWykrywaNiepoprawnyHashPoprzedniegoBloku()
         {
+            //Arrange
             blockchain.AddNewVersion("Nowa linia");
+
+            //Act
             var zmanipulowanyBlok = blockchain.Chain[1];
             zmanipulowanyBlok.PreviousHash = "NiepoprawnyHash";
             var czyPoprawny = blockchain.IsChainValid();
+
+            //Assert
             Assert.IsFalse(czyPoprawny);
         }
 
