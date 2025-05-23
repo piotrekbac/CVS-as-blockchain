@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BlockchainVersionControl.Models;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using BlockchainVersionControl.Models;
-using Newtonsoft.Json;
 
 //Piotr Bacior 15 722 WSEI Kraków - Zadanie dodatkowe - Blockchain
 
@@ -91,6 +92,12 @@ namespace BlockchainVersionControl.Core
         //Otwieramy wersję dokumentu w danej wersji, czyli wszystkie różnice między wersjami do tej wersji
         public string GetDocumentVersion(int versionIndex)
         {
+            //Sprawdzamy, czy podany indeks wersji jest poprawny, czyli czy nie jest mniejszy od 0 i nie jest większy od liczby bloków w łańcuchu
+            if (versionIndex < 0 || versionIndex >= Chain.Count)
+
+                //Jeżeli indeks jest niepoprawny, to rzucamy wyjątek ArgumentOutOfRangeException, czyli indeks jest poza zakresem
+                throw new ArgumentOutOfRangeException(nameof(versionIndex), "Podany indeks wersji nie istnieje.");
+
             //Deklarujemy zmienną document jako StringBuilder, która będzie używana do przechowywania treści dokumentu w danej wersji
             StringBuilder document = new();
 

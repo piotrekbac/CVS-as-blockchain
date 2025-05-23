@@ -124,6 +124,7 @@ namespace BlockchainVersionControl
             //Teraz tworzymy pętle while dla menu, działa aż do wybrania opcji "Zapisz i zakończ"
             while (true)
             {
+                Console.WriteLine("Piotr Bacior 15 722 - WSEI Kraków");
                 Console.WriteLine("\nWybierz dogodną dla siebie opcję:");
                 Console.WriteLine("1. Dodaj nową wersję");
                 Console.WriteLine("2. Pokaż historię");
